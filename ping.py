@@ -46,7 +46,7 @@ class PingManager:
 
 	def recvPing(self,sock):
 		start = time.time()
-		ready = select.select([sock],[],[], 5.5)
+		ready = select.select([sock],[],[], 1.0)
 		if (ready[0]):
 			data = sock.recv(2048)
 			end = time.time()
