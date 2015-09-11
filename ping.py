@@ -10,13 +10,9 @@ ICMP_ECHO = 8
 ICMP_TYPE = 0
 S_TO_MS = 1000
 
-class PingCanidate:
-	def _init_(self, addr):
-		self.addr = addr
-		self.ip = socket.gethostbyname(addr)
-
 class PingManager:
 	def __init__(self):
+		self.current = 0
 		self.toPoll = ['www.google.com', 'www.room409.xyz']
 
 	def checksum(self,data):
@@ -30,7 +26,7 @@ class PingManager:
 	def prettyPrintTime(self, t):
 		t = t * S_TO_MS
 		t = float("{0:.2f}".format(t))
-		print("Ping took " + str(t) + " ms")
+		return ("Ping took " + str(t) + " ms")
 
 	def createPing(self,ID):
 		dummyHead = struct.pack('BBHHH', ICMP_ECHO, ICMP_TYPE, 0, ID,1)
@@ -45,9 +41,8 @@ class PingManager:
 		except socket.error:
 			print("error")
 		ping = self.createPing(os.getpid())
-		print(ping)
 		sock.sendto(ping,(socket.gethostbyname(addr),1))
-		self.recvPing(sock)
+		return self.recvPing(sock)
 
 	def recvPing(self,sock):
 		start = time.time()
@@ -56,12 +51,19 @@ class PingManager:
 			data = sock.recv(2048)
 			end = time.time()
 			t = end - start
-			self.prettyPrintTime(t)
+			print(self.prettyPrintTime(t))
 			return (t, data)	
 		print("Ping timed out")
 		return(999999999999, [])
 
+	def nextPing(self):
+		t, __ = self.sendPing(self.toPoll[self.current])
+		self.current += 1
+		self.current %= len(self.toPoll)
+		return self.prettyPrintTime(t) 
+
 	def runPings(self, timeOut):
+		# runs pings forever
 		while(True):
 			for addr in self.toPoll:
 				print('pinging ' + addr)
@@ -69,6 +71,3 @@ class PingManager:
 				time.sleep(5.5)
 	def addAddr(self, newAddr):
 		self.toPoll.append(newAddr)		
-
-pm = PingManager()
-pm.runPings(2)
