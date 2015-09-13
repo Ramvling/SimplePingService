@@ -3,4 +3,4 @@ Python implementation of ping. Eventually will have a nice GUI to display the cu
 
 Requirments:
 
-Python3. You may need to manually install the tkinter module. Screen.py is the main faile, and eeds to be run as root.
+Python3. You may need to manually install the tkinter module. Screen.py is the main file, and needs to be run as root.Addresses can be added and removed from Addresses.txt
