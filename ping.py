@@ -10,10 +10,24 @@ ICMP_ECHO = 8
 ICMP_TYPE = 0
 S_TO_MS = 1000
 
+class Address:
+	def __init__(self, addr):
+		self.address = addr
+		self.online = True
+		self.labelTxt = None
+		self.labelStat = None
+	def isOnline(self):
+		return self.online
+
+
 class PingManager:
 	def __init__(self):
 		self.current = 0
-		self.toPoll = ['www.google.com', 'www.room409.xyz']
+		self.toPoll = [Address('www.google.com'),Address('www.bing.com'), Address('www.yahoo.com'),
+			Address('www.tumblr.com'), Address('www.reddit.com'), Address('www.neopets.com'), Address('www.room409.xyz')]
+
+	def peakNext(self):
+		return self.toPoll[self.current]
 
 	def checksum(self,data):
 		csum = 0
@@ -45,19 +59,22 @@ class PingManager:
 		return self.recvPing(sock)
 
 	def recvPing(self,sock):
+		toUpdate = self.toPoll[self.current].labelStat
 		start = time.time()
-		ready = select.select([sock],[],[], 1.0)
+		ready = select.select([sock],[],[], 5.0)
 		if (ready[0]):
 			data = sock.recv(2048)
 			end = time.time()
 			t = end - start
 			print(self.prettyPrintTime(t))
+			toUpdate.configure(text = self.prettyPrintTime(t), fg = 'green')
 			return (t, data)	
+		toUpdate.configure(text = "Ping timed out", fg = 'red')
 		print("Ping timed out")
 		return(999999999999, [])
 
 	def nextPing(self):
-		t, __ = self.sendPing(self.toPoll[self.current])
+		t, __ = self.sendPing(self.toPoll[self.current].address)
 		self.current += 1
 		self.current %= len(self.toPoll)
 		return self.prettyPrintTime(t) 
@@ -66,8 +83,8 @@ class PingManager:
 		# runs pings forever
 		while(True):
 			for addr in self.toPoll:
-				print('pinging ' + addr)
+				print('pinging ' + addr.address)
 				self.sendPing(addr)
 				time.sleep(5.5)
 	def addAddr(self, newAddr):
-		self.toPoll.append(newAddr)		
+		self.toPoll.append(newAddr)
