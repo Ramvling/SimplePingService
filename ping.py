@@ -10,6 +10,11 @@ ICMP_ECHO = 8
 ICMP_TYPE = 0
 S_TO_MS = 1000
 
+OKCOLOR = '#A5CD6B'
+OKBG = '#A65831'
+BADCOLOR = '#FFFFFF'
+BADBG = 'red'
+
 class Address:
 	def __init__(self, addr):
 		self.address = addr
@@ -23,8 +28,12 @@ class Address:
 class PingManager:
 	def __init__(self):
 		self.current = 0
-		self.toPoll = [Address('www.google.com'),Address('www.bing.com'), Address('www.yahoo.com'),
-			Address('www.tumblr.com'), Address('www.reddit.com'), Address('www.neopets.com'), Address('www.room409.xyz')]
+		f = open('addresses.txt')
+		temp = []
+		for line in f:
+			temp.append(Address(line[:-1]))
+			print(line)
+		self.toPoll = temp
 
 	def peakNext(self):
 		return self.toPoll[self.current]
@@ -40,7 +49,7 @@ class PingManager:
 	def prettyPrintTime(self, t):
 		t = t * S_TO_MS
 		t = float("{0:.2f}".format(t))
-		return ("Ping took " + str(t) + " ms")
+		return (str(t) + " ms")
 
 	def createPing(self,ID):
 		dummyHead = struct.pack('BBHHH', ICMP_ECHO, ICMP_TYPE, 0, ID,1)
@@ -67,9 +76,9 @@ class PingManager:
 			end = time.time()
 			t = end - start
 			print(self.prettyPrintTime(t))
-			toUpdate.configure(text = self.prettyPrintTime(t), fg = 'green')
+			toUpdate.configure(text = self.prettyPrintTime(t),bg = OKBG, fg = OKCOLOR)
 			return (t, data)	
-		toUpdate.configure(text = "Ping timed out", fg = 'red')
+		toUpdate.configure(text = "Ping timed out",bg=BADBG, fg =BADCOLOR )
 		print("Ping timed out")
 		return(999999999999, [])
 
