@@ -10,8 +10,8 @@ ICMP_ECHO = 8
 ICMP_TYPE = 0
 S_TO_MS = 1000
 
-OKCOLOR = '#A5CD6B'
-OKBG = '#A65831'
+OKCOLOR = '#FFFFFF'
+OKBG = '#003300'
 BADCOLOR = '#FFFFFF'
 BADBG = 'red'
 
@@ -52,10 +52,10 @@ class PingManager:
 		return (str(t) + " ms")
 
 	def createPing(self,ID):
-		dummyHead = struct.pack('BBHHH', ICMP_ECHO, ICMP_TYPE, 0, ID,1)
+		dummyHead = struct.pack('BBHHH', ICMP_ECHO, ICMP_TYPE, 0, 0, 1)
 		data = struct.pack('f', time.time())
 		csum = self.checksum(dummyHead+data)
-		head = struct.pack('BBHHH', ICMP_ECHO, ICMP_TYPE, csum, ID, 1)
+		head = struct.pack('BBHHH', ICMP_ECHO, ICMP_TYPE, csum, 0, 1)
 		return head +  data
 
 	def sendPing(self,addr):

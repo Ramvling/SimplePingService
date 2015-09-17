@@ -7,8 +7,8 @@ pm = ping.PingManager()
 
 CLOCKBG = '#457484'
 CLOCKTXT = '#FAE9D5'
-ADDRBG = '#6D493E'
-ADDRTXT = '#C6EFF8'
+ADDRBG = '#4B271C'
+ADDRTXT = '#E8FFF9'
 STATBG = '#A65831'
 SELECTED = '#51ABFF'
 
@@ -38,7 +38,7 @@ class PingDisplayManager:
 		labels = []
 		curx, cury = 0, 1
 		xpad,ypad = 20, 30
-		fontSize = int(w*0.015)
+		fontSize = int(w*0.02)
 		for addr in self.pingManager.toPoll:
 			new = Label(root,bg = ADDRBG,fg=ADDRTXT, text = addr.address,font=("Ariel",fontSize))
 			newStat = Label(root, bg=STATBG,text = "not pinged yet", font=("Ariel", fontSize))
